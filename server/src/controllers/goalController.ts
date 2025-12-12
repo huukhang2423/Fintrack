@@ -5,13 +5,14 @@ import { PrismaClient, GoalStatus } from '@prisma/client';
 const prisma = new PrismaClient();
 
 // Get all goals for the authenticated user
-export const getGoals = async (req: AuthRequest, res: Response): Promise<void> => {
+export const getGoals = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId;
     const { status } = req.query;
 
     if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
     }
 
     const goals = await prisma.goal.findMany({
