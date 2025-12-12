@@ -6,7 +6,7 @@ import { generateToken } from '../utils/jwt';
 import {
   generateVerificationCode,
   sendVerificationEmail,
-} from '../utils/emailService.mailgun';
+} from '../utils/emailService.resend';
 import { createDefaultCategoriesForUser } from '../utils/categoryHelper';
 
 const prisma = new PrismaClient();
