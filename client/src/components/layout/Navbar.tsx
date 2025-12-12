@@ -1,13 +1,10 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import ThemeToggle from '../ui/ThemeToggle';
 import Logo from '../ui/Logo';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
-  const location = useLocation();
-
-  const isActive = (path: string) => location.pathname === path;
 
   return (
     <nav className="bg-white dark:bg-white shadow-sm border-b border-gray-200 dark:border-gray-200 transition-colors">
