@@ -6,7 +6,7 @@ import { generateToken } from '../utils/jwt';
 import {
   generateVerificationCode,
   sendVerificationEmail,
-} from '../utils/emailService.resend';
+} from '../utils/emailService.mailgun';
 import { createDefaultCategoriesForUser } from '../utils/categoryHelper';
 
 const prisma = new PrismaClient();
@@ -32,7 +32,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const verificationCode = generateVerificationCode();
     const verificationExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-    // Create user (email verification disabled for now)
+    // Create user with email verification required
     const user = await prisma.user.create({
       data: {
         email,
@@ -40,7 +40,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         name,
         emailVerificationCode: verificationCode,
         verificationCodeExpiry: verificationExpiry,
-        isEmailVerified: true, // Auto-verify for now (Resend free tier limitation)
+        isEmailVerified: false, // Require email verification
       },
       select: {
         id: true,
@@ -51,15 +51,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       },
     });
 
-    // Create default categories for the user
-    try {
-      await createDefaultCategoriesForUser(user.id);
-    } catch (categoryError) {
-      console.error('Failed to create default categories:', categoryError);
-      // Continue even if category creation fails
-    }
-
-    // Send verification email (optional - will fail for non-verified domains)
+    // Send verification email
     try {
       await sendVerificationEmail(email, name, verificationCode);
     } catch (emailError) {
@@ -67,14 +59,10 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       // Continue registration even if email fails
     }
 
-    // Generate token for automatic login
-    const token = generateToken(user.id);
-
     res.status(201).json({
-      message: 'User registered successfully. You can now login.',
+      message: 'User registered successfully. Please check your email for verification code.',
       user,
-      token,
-      requiresVerification: false, // No verification needed
+      requiresVerification: true, // Email verification required
     });
   } catch (error) {
     console.error('Register error:', error);
