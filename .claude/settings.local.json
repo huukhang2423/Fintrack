@@ -26,7 +26,11 @@
       "Bash(taskkill //F //PID 26548)",
       "Bash(taskkill //F //PID 6028)",
       "Bash(cp:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(git remote:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

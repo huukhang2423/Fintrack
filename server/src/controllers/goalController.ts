@@ -5,7 +5,7 @@ import { PrismaClient, GoalStatus } from '@prisma/client';
 const prisma = new PrismaClient();
 
 // Get all goals for the authenticated user
-export const getGoals = async (req: AuthRequest, res: Response) => {
+export const getGoals = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userId = req.userId;
     const { status } = req.query;
