@@ -6,7 +6,7 @@ import { generateToken } from '../utils/jwt';
 import {
   generateVerificationCode,
   sendVerificationEmail,
-} from '../utils/emailService';
+} from '../utils/emailService.resend';
 
 const prisma = new PrismaClient();
 
