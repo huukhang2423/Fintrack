@@ -7,6 +7,7 @@ import {
   generateVerificationCode,
   sendVerificationEmail,
 } from '../utils/emailService.resend';
+import { createDefaultCategoriesForUser } from '../utils/categoryHelper';
 
 const prisma = new PrismaClient();
 
@@ -197,6 +198,14 @@ export const verifyEmail = async (
         verificationCodeExpiry: null,
       },
     });
+
+    // Create default categories for the user
+    try {
+      await createDefaultCategoriesForUser(user.id);
+    } catch (categoryError) {
+      console.error('Failed to create default categories:', categoryError);
+      // Continue even if category creation fails
+    }
 
     // Generate token for automatic login
     const token = generateToken(user.id);
