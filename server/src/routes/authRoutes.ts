@@ -1,5 +1,11 @@
 import { Router } from 'express';
-import { register, login, getMe } from '../controllers/authController';
+import {
+  register,
+  login,
+  getMe,
+  verifyEmail,
+  resendVerificationCode,
+} from '../controllers/authController';
 import { authenticate } from '../middleware/auth';
 import {
   registerValidation,
@@ -11,6 +17,8 @@ const router = Router();
 
 router.post('/register', registerValidation, validateRequest, register);
 router.post('/login', loginValidation, validateRequest, login);
+router.post('/verify-email', verifyEmail);
+router.post('/resend-verification', resendVerificationCode);
 router.get('/me', authenticate, getMe);
 
 export default router;

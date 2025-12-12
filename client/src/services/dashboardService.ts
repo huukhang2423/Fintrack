@@ -1,5 +1,5 @@
 import api from './api';
-import { DashboardSummary, ChartDataItem, Transaction } from '../types';
+import { DashboardSummary, ChartDataItem, Transaction, TrendDataItem } from '../types';
 
 export const dashboardService = {
   async getSummary(month?: number, year?: number): Promise<DashboardSummary> {
@@ -28,5 +28,13 @@ export const dashboardService = {
       { params: { limit } }
     );
     return response.data.transactions;
+  },
+
+  async getMonthlyTrend(months = 6): Promise<TrendDataItem[]> {
+    const response = await api.get<{ trendData: TrendDataItem[] }>(
+      '/dashboard/trend',
+      { params: { months } }
+    );
+    return response.data.trendData;
   },
 };

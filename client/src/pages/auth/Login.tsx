@@ -6,6 +6,7 @@ import { authService } from '../../services/authService';
 import { useAuth } from '../../context/AuthContext';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
+import Logo from '../../components/ui/Logo';
 
 interface LoginFormData {
   email: string;
@@ -38,13 +39,14 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <div className="flex flex-col items-center">
+          <Logo size="lg" />
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
             Welcome to FinTrack
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="mt-2 text-center text-sm text-gray-400">
             Sign in to your account
           </p>
         </div>
@@ -83,7 +85,7 @@ const Login = () => {
           <div className="text-center">
             <Link
               to="/register"
-              className="text-sm text-primary-600 hover:text-primary-500"
+              className="text-sm text-primary-400 hover:text-primary-300 transition-colors"
             >
               Don't have an account? Sign up
             </Link>

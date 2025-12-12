@@ -36,16 +36,19 @@ ITPM_PROJ/
 
 ## Features
 
-### Phase 1 - MVP (Core Features)
-- [F-01] User Authentication (Register/Login)
-- [F-02] Transaction Management (CRUD)
-- [F-03] Transaction Categorization
-- [F-04] Dashboard with Summary
-- [F-05] Data Visualization (Charts)
-
-### Phase 2 - Secondary Features
-- [F-06] Budget Management
-- [F-07] Transaction History & Filtering
+### ✅ Implemented Features
+- **User Authentication** - Register/Login with JWT & Email Verification
+- **Transaction Management** - Full CRUD operations for income/expenses
+- **Budget Management** - Set and track monthly budgets by category
+- **Goals & Savings** - Create savings goals and track progress
+- **Advanced Dashboard**:
+  - 6-Month Income/Expense/Balance Trend Chart
+  - Income vs Expense Comparison Bar Chart
+  - Expense Breakdown Pie Chart
+  - Income Breakdown Pie Chart
+  - Recent Transactions List
+- **Dark Mode** - Full dark mode support with theme persistence
+- **Responsive Design** - Works on desktop, tablet, and mobile
 
 ## Setup Instructions
 
@@ -131,6 +134,32 @@ npm run dev
 ### Dashboard
 - `GET /api/dashboard/summary` - Get dashboard summary
 - `GET /api/dashboard/chart` - Get chart data
+- `GET /api/dashboard/trend` - Get 6-month trend data
+- `GET /api/dashboard/recent` - Get recent transactions
+
+### Budgets
+- `GET /api/budgets` - Get all budgets
+- `POST /api/budgets` - Create budget
+- `PUT /api/budgets/:id` - Update budget
+- `DELETE /api/budgets/:id` - Delete budget
+
+### Goals
+- `GET /api/goals` - Get all goals
+- `GET /api/goals/:id` - Get single goal
+- `POST /api/goals` - Create goal
+- `PUT /api/goals/:id` - Update goal
+- `DELETE /api/goals/:id` - Delete goal
+- `POST /api/goals/:id/contributions` - Add contribution
+- `DELETE /api/goals/:goalId/contributions/:contributionId` - Remove contribution
+
+## 🌐 Deployment
+
+See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for detailed deployment instructions to Render + Vercel (100% FREE).
+
+Quick summary:
+1. **Backend:** Deploy to Render.com with PostgreSQL
+2. **Frontend:** Deploy to Vercel
+3. **Total Cost:** $0/month 🎉
 
 ## License
 

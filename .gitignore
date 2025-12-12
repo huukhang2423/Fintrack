@@ -37,8 +37,11 @@ logs/
 .DS_Store
 Thumbs.db
 
-# Prisma
-server/prisma/migrations/
+# Prisma (Don't ignore migrations - needed for deployment!)
+# server/prisma/migrations/
 
 # Build files
 *.tsbuildinfo
+
+# Deployment files (keep examples)
+.env.production

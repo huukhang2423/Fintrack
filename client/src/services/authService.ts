@@ -23,6 +23,22 @@ export const authService = {
     return response.data;
   },
 
+  async verifyEmail(email: string, code: string): Promise<AuthResponse> {
+    const response = await api.post<AuthResponse>('/auth/verify-email', {
+      email,
+      code,
+    });
+    return response.data;
+  },
+
+  async resendVerificationCode(email: string): Promise<{ message: string }> {
+    const response = await api.post<{ message: string }>(
+      '/auth/resend-verification',
+      { email }
+    );
+    return response.data;
+  },
+
   async getMe(): Promise<{ user: any }> {
     const response = await api.get('/auth/me');
     return response.data;

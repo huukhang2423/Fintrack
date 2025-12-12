@@ -9,6 +9,7 @@ export interface AuthResponse {
   user: User;
   token: string;
   message: string;
+  requiresVerification?: boolean;
 }
 
 export interface Category {
@@ -57,6 +58,13 @@ export interface ChartDataItem {
   color: string;
 }
 
+export interface TrendDataItem {
+  month: string;
+  income: number;
+  expense: number;
+  balance: number;
+}
+
 export interface Budget {
   id: string;
   amount: number;
@@ -66,4 +74,48 @@ export interface Budget {
   remaining?: number;
   percentage?: number;
   category: Category;
+}
+
+export interface BudgetInput {
+  categoryId: string;
+  amount: number;
+  month: number;
+  year: number;
+}
+
+export interface Goal {
+  id: string;
+  name: string;
+  description?: string;
+  targetAmount: number;
+  currentAmount: number;
+  deadline?: string;
+  status: 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
+  createdAt: string;
+  updatedAt: string;
+  percentage?: number;
+  remaining?: number;
+  contributions: GoalContribution[];
+}
+
+export interface GoalContribution {
+  id: string;
+  amount: number;
+  date: string;
+  note?: string;
+  createdAt: string;
+  goalId: string;
+}
+
+export interface GoalInput {
+  name: string;
+  description?: string;
+  targetAmount: number;
+  deadline?: string;
+}
+
+export interface ContributionInput {
+  amount: number;
+  note?: string;
+  date?: string;
 }

@@ -6,6 +6,7 @@ import { authService } from '../../services/authService';
 import { useAuth } from '../../context/AuthContext';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
+import Logo from '../../components/ui/Logo';
 
 interface RegisterFormData {
   name: string;
@@ -36,9 +37,17 @@ const Register = () => {
         email: data.email,
         password: data.password,
       });
-      login(response.token, response.user);
-      toast.success('Registration successful!');
-      navigate('/dashboard');
+
+      // Check if email verification is required
+      if (response.requiresVerification) {
+        toast.success('Registration successful! Please check your email for verification code.');
+        navigate('/verify-email', { state: { email: data.email } });
+      } else {
+        // Old flow (if verification is disabled)
+        login(response.token, response.user);
+        toast.success('Registration successful!');
+        navigate('/dashboard');
+      }
     } catch (error: any) {
       toast.error(error.response?.data?.error || 'Registration failed');
     } finally {
@@ -47,13 +56,14 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <div className="flex flex-col items-center">
+          <Logo size="lg" />
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
             Create your account
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="mt-2 text-center text-sm text-gray-400">
             Start tracking your finances today
           </p>
         </div>
@@ -116,7 +126,7 @@ const Register = () => {
           <div className="text-center">
             <Link
               to="/login"
-              className="text-sm text-primary-600 hover:text-primary-500"
+              className="text-sm text-primary-400 hover:text-primary-300 transition-colors"
             >
               Already have an account? Sign in
             </Link>

@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinTrack - Kiến trúc 3 tầng (3-Tier Architecture)</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 30px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 50px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3.5em;
+            margin-bottom: 15px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.4em;
+            opacity: 0.95;
+        }
+
+        .subtitle {
+            font-size: 1.8em;
+            color: #667eea;
+            text-align: center;
+            margin: 40px 0;
+            font-weight: bold;
+            padding: 0 20px;
+        }
+
+        .main-diagram {
+            padding: 50px;
+            background: linear-gradient(to bottom, #f8fafc 0%, #e0e7ff 100%);
+        }
+
+        .tier-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            margin: 40px 0;
+        }
+
+        .tier {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 3px solid;
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .tier:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .tier-1 {
+            border-color: #fbbf24;
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+        }
+
+        .tier-2 {
+            border-color: #34d399;
+            background: linear-gradient(135deg, #f0fdf4 0%, #d1fae5 100%);
+        }
+
+        .tier-3 {
+            border-color: #818cf8;
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+        }
+
+        .tier-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid;
+        }
+
+        .tier-1 .tier-header {
+            border-bottom-color: #fbbf24;
+        }
+
+        .tier-2 .tier-header {
+            border-bottom-color: #34d399;
+        }
+
+        .tier-3 .tier-header {
+            border-bottom-color: #818cf8;
+        }
+
+        .tier-icon {
+            font-size: 4em;
+            margin-right: 20px;
+        }
+
+        .tier-title {
+            flex: 1;
+        }
+
+        .tier-title h2 {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+        }
+
+        .tier-1 .tier-title h2 {
+            color: #d97706;
+        }
+
+        .tier-2 .tier-title h2 {
+            color: #059669;
+        }
+
+        .tier-3 .tier-title h2 {
+            color: #6366f1;
+        }
+
+        .tier-title .subtitle-text {
+            font-size: 1.2em;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .tier-badge {
+            background: white;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1.1em;
+            border: 2px solid;
+        }
+
+        .tier-1 .tier-badge {
+            border-color: #fbbf24;
+            color: #d97706;
+        }
+
+        .tier-2 .tier-badge {
+            border-color: #34d399;
+            color: #059669;
+        }
+
+        .tier-3 .tier-badge {
+            border-color: #818cf8;
+            color: #6366f1;
+        }
+
+        .tier-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .component-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .tier-1 .component-card {
+            border-left-color: #f59e0b;
+        }
+
+        .tier-2 .component-card {
+            border-left-color: #10b981;
+        }
+
+        .tier-3 .component-card {
+            border-left-color: #6366f1;
+        }
+
+        .component-card h3 {
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .component-card .tech-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .component-card .tech-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #475569;
+        }
+
+        .component-card .tech-list li:before {
+            content: "▸";
+            position: absolute;
+            left: 5px;
+            font-weight: bold;
+        }
+
+        .tier-1 .component-card .tech-list li:before {
+            color: #f59e0b;
+        }
+
+        .tier-2 .component-card .tech-list li:before {
+            color: #10b981;
+        }
+
+        .tier-3 .component-card .tech-list li:before {
+            color: #6366f1;
+        }
+
+        .connection-arrow {
+            text-align: center;
+            font-size: 4em;
+            color: #64748b;
+            margin: 20px 0;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .info-box h3 {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .info-box p {
+            font-size: 1.2em;
+            line-height: 1.8;
+        }
+
+        .flow-diagram {
+            background: white;
+            padding: 40px;
+            margin: 40px 0;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .flow-title {
+            font-size: 2.2em;
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .tech-stack-section {
+            background: #f8fafc;
+            padding: 50px;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .tech-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid;
+        }
+
+        .tech-card-1 {
+            border-top-color: #fbbf24;
+        }
+
+        .tech-card-2 {
+            border-top-color: #34d399;
+        }
+
+        .tech-card-3 {
+            border-top-color: #818cf8;
+        }
+
+        .tech-card h3 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tech-badge-item {
+            display: inline-block;
+            background: #e0e7ff;
+            color: #4f46e5;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 0.95em;
+            font-weight: 600;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: left;
+            font-size: 1.2em;
+        }
+
+        .comparison-table td {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 1.05em;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .tier-label {
+            font-weight: bold;
+            padding: 5px 15px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .label-tier1 {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .label-tier2 {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .label-tier3 {
+            background: #e0e7ff;
+            color: #6366f1;
+        }
+
+        .benefits-section {
+            padding: 50px;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .benefit-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .benefit-card:hover {
+            transform: scale(1.05);
+        }
+
+        .benefit-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .benefit-card h3 {
+            font-size: 1.5em;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .benefit-card p {
+            color: #64748b;
+            line-height: 1.8;
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .footer h3 {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .port-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        @media (max-width: 1200px) {
+            .tech-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .tier-title h2 {
+                font-size: 1.8em;
+            }
+
+            .tier-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏗️ KIẾN TRÚC 3 TẦNG</h1>
+            <p>FinTrack - Personal Finance Management Platform</p>
+            <p style="margin-top: 10px; font-size: 1.1em;">Three-Tier Architecture Design</p>
+        </div>
+
+        <div class="main-diagram">
+            <h2 class="subtitle">🎯 TỔNG QUAN KIẾN TRÚC 3 TẦNG</h2>
+
+            <div class="tier-container">
+                <!-- TIER 1: PRESENTATION LAYER -->
+                <div class="tier tier-1">
+                    <div class="tier-header">
+                        <div class="tier-icon">🎨</div>
+                        <div class="tier-title">
+                            <h2>TẦNG 1: PRESENTATION LAYER</h2>
+                            <div class="subtitle-text">Frontend / Client / UI Layer</div>
+                        </div>
+                        <div class="tier-badge">PORT: 5173</div>
+                    </div>
+
+                    <div class="tier-content">
+                        <div class="component-card">
+                            <h3>⚛️ React Application</h3>
+                            <ul class="tech-list">
+                                <li><strong>React 18.2.0</strong> - UI Framework</li>
+                                <li><strong>TypeScript 5.3.3</strong> - Type Safety</li>
+                                <li><strong>Vite 5.0.11</strong> - Build Tool</li>
+                                <li><strong>React Router 6.21.1</strong> - Navigation</li>
+                            </ul>
+                        </div>
+
+                        <div class="component-card">
+                            <h3>🧩 UI Components</h3>
+                            <ul class="tech-list">
+                                <li><strong>Layout</strong> - Navbar, Sidebar</li>
+                                <li><strong>Forms</strong> - Input, Button, Modal</li>
+                                <li><strong>Cards</strong> - Display data</li>
+                                <li><strong>Charts</strong> - Recharts visualization</li>
+                            </ul>
+                        </div>
+
+                        <div class="component-card">
+                            <h3>🎨 Styling & Design</h3>
+                            <ul class="tech-list">
+                                <li><strong>Tailwind CSS 3.4.1</strong> - Utility CSS</li>
+                                <li><strong>Custom Colors</strong> - Brand theming</li>
+                                <li><strong>Responsive</strong> - Mobile-friendly</li>
+                                <li><strong>Animations</strong> - Smooth transitions</li>
+                            </ul>
+                        </div>
+
+                        <div class="component-card">
+                            <h3>🔄 State Management</h3>
+                            <ul class="tech-list">
+                                <li><strong>AuthContext</strong> - User authentication</li>
+                                <li><strong>React Hooks</strong> - useState, useEffect</li>
+                                <li><strong>LocalStorage</strong> - Token persistence</li>
+                                <li><strong>React Hook Form</strong> - Form handling</li>
+                            </ul>
+                        </div>
+
+                        <div class="component-card">
+                            <h3>🌐 HTTP Communication</h3>
+                            <ul class="tech-list">
+                                <li><strong>Axios 1.6.5</strong> - HTTP Client</li>
+                                <li><strong>Interceptors</strong> - Auto add JWT token</li>
+                                <li><strong>Error Handling</strong> - 401 redirect</li>
+                                <li><strong>Base URL</strong> - http://localhost:3000/api</li>
+                            </ul>
+                        </div>
+
+                        <div class="component-card">
+                            <h3>📄 Main Pages</h3>
+                            <ul class="tech-list">
+                                <li><strong>Login/Register</strong> - Authentication</li>
+                                <li><strong>Dashboard</strong> - Analytics overview</li>
+                                <li><strong>Transactions</strong> - CRUD operations</li>
+                                <li><strong>Categories & Budgets</strong> - Management</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="info-box" style="margin-top: 30px;">
+                        <h3>🎯 Trách nhiệm của Presentation Layer</h3>
+                        <p>
+                            ✅ Hiển thị giao diện người dùng đẹp mắt<br>
+                            ✅ Nhận input từ user (click, form submission)<br>
+                            ✅ Gửi HTTP request đến Backend API<br>
+                            ✅ Hiển thị kết quả trả về từ Backend<br>
+                            ❌ KHÔNG xử lý business logic phức tạp<br>
+                            ❌ KHÔNG truy cập database trực tiếp
+                        </p>
+                    </div>
+                </div>
+
+                <div class="connection-arrow">⬇️</div>
+                <div style="text-align: center; font-size: 1.5em; color: #667eea; font-weight: bold; margin: -10px 0;">
+                    REST API (HTTP/HTTPS + JSON) + JWT Bearer Token
+                </div>
+                <div class="connection-arrow">⬇️</div>
+
+                <!-- TIER 2: APPLICATION LAYER -->
+                <div class="tier tier-2">
+                    <div class="tier-header">
+                        <div class="tier-icon">⚙️</div>
+                        <div class="tier-title">
+                            <h2>TẦNG 2: APPLICATION LAYER</h2>
+                            <div class="subtitle-text">Backend / Server / Business Logic Layer</div>
+                        </div>
+                        <div class="tier-badge">PORT: 3000</div>
+                    </div>
+
+                    <div class="tier-content">
+                        <div class="component-card">
+                            <h3>🚀 Express.js Server</h3>
+                            <ul class="tech-list">
+                                <li><strong>Express 4.18.2</strong> - Web framework</li>
+                                <li><strong>Node.js</strong> - Runtime environment</li>
+                                <li><strong>TypeScript 5.3.3</strong> - Type safety</li>
+                                <li><strong>ts-node-dev</strong> - Development server</li>
+                            </ul>
+                        </div>
+
+                        <div class="component-card">
+                            <h3>🔐 Middleware Layer</h3>
+                            <ul class="tech-list">
+                                <li><strong>CORS</strong> - Cross-origin requests</li>
+                                <li><strong>JWT Authentication</strong> - Verify tokens</li>
+                                <li><strong>express-validator</strong> - Input validation</li>
+                                <li><strong>Error Handler</strong> - Catch exceptions</li>
+                            </ul>
+                        </div>
+
+                        <div class="component-card">
+                            <h3>🎯 Controllers (Business Logic)</h3>
+                            <ul class="tech-list">
+                                <li><strong>authController</strong> - Register, Login</li>
+                                <li><strong>transactionController</strong> - CRUD</li>
+                                <li><strong>categoryController</strong> - Categories</li>
+                                <li><strong>budgetController</strong> - Budget logic</li>
+                                <li><strong>dashboardController</strong> - Analytics</li>
+                            </ul>
+                        </div>
+
+                        <div class="component-card">
+                            <h3>🛣️ API Routes</h3>
+                            <ul class="tech-list">
+                                <li><strong>/api/auth/*</strong> - Authentication</li>
+                                <li><strong>/api/transactions/*</strong> - Transactions</li>
+                                <li><strong>/api/categories/*</strong> - Categories</li>
+                                <li><strong>/api/budgets/*</strong> - Budgets</li>
+                                <li><strong>/api/dashboard/*</strong> - Dashboard</li>
+                            </ul>
+                        </div>
+
+                        <div class="component-card">
+                            <h3>🔒 Security Components</h3>
+                            <ul class="tech-list">
+                                <li><strong>JWT (jsonwebtoken)</strong> - Token generation</li>
+                                <li><strong>bcrypt 5.1.1</strong> - Password hashing</li>
+                                <li><strong>Authentication</strong> - Protected routes</li>
+                                <li><strong>Authorization</strong> - User isolation</li>
+                            </ul>
+                        </div>
+
+                        <div class="component-card">
+                            <h3>⚡ Prisma ORM</h3>
+                            <ul class="tech-list">
+                                <li><strong>Prisma Client</strong> - Type-safe queries</li>
+                                <li><strong>Schema Definition</strong> - Models</li>
+                                <li><strong>Migrations</strong> - Database versioning</li>
+                                <li><strong>Query Builder</strong> - SQL abstraction</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="info-box" style="margin-top: 30px;">
+                        <h3>🎯 Trách nhiệm của Application Layer</h3>
+                        <p>
+                            ✅ Nhận và xử lý HTTP requests từ Frontend<br>
+                            ✅ Authentication & Authorization (JWT)<br>
+                            ✅ Validate dữ liệu đầu vào<br>
+                            ✅ Xử lý BUSINESS LOGIC (tính toán, xử lý dữ liệu)<br>
+                            ✅ Tương tác với Database qua Prisma ORM<br>
+                            ✅ Trả JSON response về Frontend<br>
+                            🛡️ BẢO MẬT: Ngăn Frontend truy cập trực tiếp Database
+                        </p>
+                    </div>
+                </div>
+
+                <div class="connection-arrow">⬇️</div>
+                <div style="text-align: center; font-size: 1.5em; color: #667eea; font-weight: bold; margin: -10px 0;">
+                    Prisma ORM (SQL Queries via TCP/IP)
+                </div>
+                <div class="connection-arrow">⬇️</div>
+
+                <!-- TIER 3: DATA LAYER -->
+                <div class="tier tier-3">
+                    <div class="tier-header">
+                        <div class="tier-icon">🗄️</div>
+                        <div class="tier-title">
+                            <h2>TẦNG 3: DATA LAYER</h2>
+                            <div class="subtitle-text">Database / Data Storage / Persistence Layer</div>
+                        </div>
+                        <div class="tier-badge">PORT: 5432</div>
+                    </div>
+
+                    <div class="tier-content">
+                        <div class="component-card">
+                            <h3>🐘 PostgreSQL Database</h3>
+                            <ul class="tech-list">
+                                <li><strong>PostgreSQL</strong> - RDBMS</li>
+                                <li><strong>Database Name</strong> - fintrack</li>
+                                <li><strong>Connection</strong> - DATABASE_URL</li>
+                                <li><strong>Port</strong> - 5432 (default)</li>
+                            </ul>
+                        </div>
+
+                        <div class="component-card">
+                            <h3>👤 Users Table</h3>
+                            <ul class="tech-list">
+                                <li><strong>id</strong> - UUID (Primary Key)</li>
+                                <li><strong>email</strong> - String (Unique)</li>
+                                <li><strong>password</strong> - String (Hashed)</li>
+                                <li><strong>name</strong> - String</li>
+                                <li><strong>Timestamps</strong> - createdAt, updatedAt</li>
+                            </ul>
+                        </div>
+
+                        <div class="component-card">
+                            <h3>📁 Categories Table</h3>
+                            <ul class="tech-list">
+                                <li><strong>id</strong> - UUID (Primary Key)</li>
+                                <li><strong>name</strong> - String</li>
+                                <li><strong>type</strong> - INCOME | EXPENSE</li>
+                                <li><strong>icon, color</strong> - Customization</li>
+                                <li><strong>isDefault</strong> - Boolean</li>
+                                <li><strong>userId</strong> - Foreign Key</li>
+                            </ul>
+                        </div>
+
+                        <div class="component-card">
+                            <h3>💵 Transactions Table</h3>
+                            <ul class="tech-list">
+                                <li><strong>id</strong> - UUID (Primary Key)</li>
+                                <li><strong>amount</strong> - Decimal(12, 2)</li>
+                                <li><strong>type</strong> - INCOME | EXPENSE</li>
+                                <li><strong>description</strong> - String (Optional)</li>
+                                <li><strong>date</strong> - DateTime</li>
+                                <li><strong>userId, categoryId</strong> - Foreign Keys</li>
+                                <li><strong>Index</strong> - (userId, date)</li>
+                            </ul>
+                        </div>
+
+                        <div class="component-card">
+                            <h3>💰 Budgets Table</h3>
+                            <ul class="tech-list">
+                                <li><strong>id</strong> - UUID (Primary Key)</li>
+                                <li><strong>amount</strong> - Decimal(12, 2)</li>
+                                <li><strong>month</strong> - Integer (1-12)</li>
+                                <li><strong>year</strong> - Integer</li>
+                                <li><strong>userId, categoryId</strong> - Foreign Keys</li>
+                                <li><strong>Unique</strong> - (userId, categoryId, month, year)</li>
+                            </ul>
+                        </div>
+
+                        <div class="component-card">
+                            <h3>🔗 Relationships</h3>
+                            <ul class="tech-list">
+                                <li><strong>User ➜ Transactions</strong> - One-to-Many</li>
+                                <li><strong>User ➜ Categories</strong> - One-to-Many</li>
+                                <li><strong>User ➜ Budgets</strong> - One-to-Many</li>
+                                <li><strong>Category ➜ Transactions</strong> - One-to-Many</li>
+                                <li><strong>Category ➜ Budgets</strong> - One-to-Many</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="info-box" style="margin-top: 30px;">
+                        <h3>🎯 Trách nhiệm của Data Layer</h3>
+                        <p>
+                            ✅ Lưu trữ dữ liệu vĩnh viễn (Persistent Storage)<br>
+                            ✅ Đảm bảo tính toàn vẹn dữ liệu (Data Integrity)<br>
+                            ✅ Xử lý relationships giữa các bảng (Foreign Keys)<br>
+                            ✅ Optimize queries với Indexes<br>
+                            ✅ Backup và Recovery<br>
+                            🔒 CHỈ Backend (Tầng 2) mới được truy cập trực tiếp<br>
+                            ❌ Frontend KHÔNG BAO GIỜ truy cập trực tiếp Database
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flow Diagram Section -->
+        <div class="flow-diagram">
+            <h2 class="flow-title">🔄 LUỒNG DỮ LIỆU QUA 3 TẦNG</h2>
+            <p style="text-align: center; color: #64748b; font-size: 1.2em; margin-bottom: 30px;">
+                Ví dụ: User tạo một transaction mới (INCOME: 50,000 VND)
+            </p>
+            <div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant User as 👤 USER<br/>(Browser)
+    participant UI as 🎨 TIER 1<br/>Frontend<br/>React App<br/>Port 5173
+    participant API as ⚙️ TIER 2<br/>Backend<br/>Express API<br/>Port 3000
+    participant DB as 🗄️ TIER 3<br/>Database<br/>PostgreSQL<br/>Port 5432
+
+    rect rgb(255, 251, 235)
+    Note over User,UI: 📝 USER INPUT
+    User->>UI: Điền form transaction<br/>Amount: 50000<br/>Type: INCOME<br/>Category: Salary
+    UI->>UI: Validate form (client-side)<br/>Check amount > 0
+    end
+
+    rect rgb(240, 253, 244)
+    Note over UI,API: 🌐 HTTP REQUEST
+    UI->>API: POST /api/transactions<br/>Headers: Authorization: Bearer JWT_TOKEN<br/>Body: {amount, type, categoryId, date}
+    API->>API: 🔐 Middleware: Verify JWT token
+    API->>API: ✅ Middleware: Validate input data
+    API->>API: 🎯 Controller: Process business logic
+    end
+
+    rect rgb(238, 242, 255)
+    Note over API,DB: 💾 DATABASE OPERATION
+    API->>DB: Prisma: prisma.transaction.create()<br/>SQL: INSERT INTO transactions
+    DB->>DB: Check constraints & Foreign Keys
+    DB->>DB: Save record to transactions table
+    DB-->>API: Return: Transaction object with ID
+    end
+
+    rect rgb(240, 253, 244)
+    Note over API,UI: 📤 HTTP RESPONSE
+    API->>API: Format response as JSON
+    API-->>UI: 200 OK<br/>{message: "Success", transaction: {...}}
+    end
+
+    rect rgb(255, 251, 235)
+    Note over UI,User: 🎨 UI UPDATE
+    UI->>UI: Update React state
+    UI->>UI: Refresh transaction list
+    UI->>UI: Show toast notification
+    UI-->>User: Display: "Transaction created successfully! ✅"
+    end
+            </div>
+        </div>
+
+        <!-- Technology Stack Section -->
+        <div class="tech-stack-section">
+            <h2 class="subtitle">📊 CÔNG NGHỆ THEO TỪNG TẦNG</h2>
+            <div class="tech-grid">
+                <div class="tech-card tech-card-1">
+                    <h3>🎨 TIER 1 - Frontend</h3>
+                    <div>
+                        <span class="tech-badge-item">React 18.2.0</span>
+                        <span class="tech-badge-item">TypeScript 5.3.3</span>
+                        <span class="tech-badge-item">Vite 5.0.11</span>
+                        <span class="tech-badge-item">Tailwind CSS 3.4.1</span>
+                        <span class="tech-badge-item">React Router 6.21.1</span>
+                        <span class="tech-badge-item">Axios 1.6.5</span>
+                        <span class="tech-badge-item">Recharts 2.10.3</span>
+                        <span class="tech-badge-item">React Hook Form</span>
+                        <span class="tech-badge-item">React Hot Toast</span>
+                    </div>
+                </div>
+
+                <div class="tech-card tech-card-2">
+                    <h3>⚙️ TIER 2 - Backend</h3>
+                    <div>
+                        <span class="tech-badge-item">Node.js</span>
+                        <span class="tech-badge-item">Express 4.18.2</span>
+                        <span class="tech-badge-item">TypeScript 5.3.3</span>
+                        <span class="tech-badge-item">Prisma ORM 5.8.0</span>
+                        <span class="tech-badge-item">JWT 9.0.2</span>
+                        <span class="tech-badge-item">bcrypt 5.1.1</span>
+                        <span class="tech-badge-item">CORS 2.8.5</span>
+                        <span class="tech-badge-item">express-validator</span>
+                        <span class="tech-badge-item">dotenv 16.3.1</span>
+                    </div>
+                </div>
+
+                <div class="tech-card tech-card-3">
+                    <h3>🗄️ TIER 3 - Database</h3>
+                    <div>
+                        <span class="tech-badge-item">PostgreSQL</span>
+                        <span class="tech-badge-item">Prisma Client</span>
+                        <span class="tech-badge-item">Prisma Migrate</span>
+                        <span class="tech-badge-item">Prisma Studio</span>
+                        <span class="tech-badge-item">UUID Primary Keys</span>
+                        <span class="tech-badge-item">Foreign Keys</span>
+                        <span class="tech-badge-item">Indexes</span>
+                        <span class="tech-badge-item">Constraints</span>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="subtitle" style="margin-top: 50px;">📋 SO SÁNH 3 TẦNG</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Đặc điểm</th>
+                        <th>TIER 1 - Presentation</th>
+                        <th>TIER 2 - Application</th>
+                        <th>TIER 3 - Data</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Tên khác</strong></td>
+                        <td><span class="tier-label label-tier1">Frontend / Client / UI</span></td>
+                        <td><span class="tier-label label-tier2">Backend / Server / Logic</span></td>
+                        <td><span class="tier-label label-tier3">Database / Storage</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Công nghệ chính</strong></td>
+                        <td>React + TypeScript + Vite</td>
+                        <td>Express.js + Node.js</td>
+                        <td>PostgreSQL</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Chạy trên</strong></td>
+                        <td>Browser (Chrome, Firefox, etc.)</td>
+                        <td>Node.js Server</td>
+                        <td>PostgreSQL Server</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Port</strong></td>
+                        <td>5173 (Vite dev server)</td>
+                        <td>3000 (Express API)</td>
+                        <td>5432 (PostgreSQL default)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Trách nhiệm chính</strong></td>
+                        <td>Hiển thị UI, nhận user input</td>
+                        <td>Business logic, xử lý dữ liệu</td>
+                        <td>Lưu trữ dữ liệu vĩnh viễn</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Giao tiếp với</strong></td>
+                        <td>User ↔ Tier 2 (API)</td>
+                        <td>Tier 1 ↔ Tier 3 (Database)</td>
+                        <td>Tier 2 only</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Xử lý Business Logic</strong></td>
+                        <td>❌ Không (chỉ validation cơ bản)</td>
+                        <td>✅ Có (toàn bộ logic)</td>
+                        <td>❌ Không</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Truy cập Database</strong></td>
+                        <td>❌ KHÔNG BAO GIỜ</td>
+                        <td>✅ Có (qua Prisma ORM)</td>
+                        <td>N/A (chính là Database)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>State Management</strong></td>
+                        <td>✅ React Context, LocalStorage</td>
+                        <td>❌ Stateless (JWT-based)</td>
+                        <td>✅ Persistent data storage</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Security</strong></td>
+                        <td>Store JWT token, validate input</td>
+                        <td>Verify JWT, hash passwords</td>
+                        <td>Constraints, Foreign Keys</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Scaling Strategy</strong></td>
+                        <td>CDN, Static file hosting</td>
+                        <td>Load balancer, multiple instances</td>
+                        <td>Replication, sharding</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Benefits Section -->
+        <div class="benefits-section">
+            <h2 class="subtitle">✨ LỢI ÍCH CỦA KIẾN TRÚC 3 TẦNG</h2>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">🎯</div>
+                    <h3>Separation of Concerns</h3>
+                    <p>Mỗi tầng có trách nhiệm rõ ràng, không chồng chéo. Frontend chỉ lo UI, Backend lo logic, Database lo lưu trữ.</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">🔒</div>
+                    <h3>Security Enhancement</h3>
+                    <p>Frontend không truy cập trực tiếp database. Tất cả phải qua Backend layer với authentication và authorization.</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">📈</div>
+                    <h3>Independent Scaling</h3>
+                    <p>Có thể scale từng tầng riêng biệt. Ví dụ: Thêm server Backend mà không ảnh hưởng Frontend hay Database.</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">🔧</div>
+                    <h3>Easy Maintenance</h3>
+                    <p>Dễ bảo trì và sửa lỗi. Thay đổi UI không ảnh hưởng Backend. Đổi database không ảnh hưởng Frontend.</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">♻️</div>
+                    <h3>Code Reusability</h3>
+                    <p>Backend API có thể tái sử dụng cho nhiều client: Web, Mobile App, Desktop App, etc.</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">👥</div>
+                    <h3>Team Collaboration</h3>
+                    <p>Team Frontend và Backend có thể làm việc song song độc lập. Chỉ cần thống nhất API contract.</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">🧪</div>
+                    <h3>Testing Isolation</h3>
+                    <p>Có thể test từng tầng riêng biệt. Unit test, Integration test, E2E test dễ dàng hơn.</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">🚀</div>
+                    <h3>Technology Flexibility</h3>
+                    <p>Có thể thay đổi công nghệ từng tầng. Ví dụ: Đổi React sang Vue, đổi PostgreSQL sang MySQL.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Architecture Diagram -->
+        <div class="flow-diagram">
+            <h2 class="flow-title">🏗️ SƠ ĐỒ KIẾN TRÚC TỔNG QUAN</h2>
+            <div class="mermaid">
+graph TB
+    subgraph INTERNET["🌐 INTERNET"]
+        User["👤 END USER<br/>(Browser/Mobile)"]
+    end
+
+    subgraph TIER1["🎨 TIER 1: PRESENTATION LAYER<br/>Port 5173"]
+        React["⚛️ React Application"]
+        Components["🧩 UI Components"]
+        Router["🔀 React Router"]
+        Context["📦 Auth Context"]
+        Axios["🌐 Axios HTTP Client"]
+    end
+
+    subgraph TIER2["⚙️ TIER 2: APPLICATION LAYER<br/>Port 3000"]
+        Express["🚀 Express.js Server"]
+
+        subgraph Middleware["🔐 Middleware"]
+            CORS["CORS"]
+            Auth["JWT Auth"]
+            Validation["Validation"]
+        end
+
+        subgraph Controllers["🎯 Controllers"]
+            AuthCtrl["Auth"]
+            TransCtrl["Transaction"]
+            CatCtrl["Category"]
+            BudgetCtrl["Budget"]
+            DashCtrl["Dashboard"]
+        end
+
+        Prisma["⚡ Prisma ORM"]
+    end
+
+    subgraph TIER3["🗄️ TIER 3: DATA LAYER<br/>Port 5432"]
+        PostgreSQL["🐘 PostgreSQL Database"]
+
+        subgraph Tables["📊 Tables"]
+            Users[("👤 Users")]
+            Categories[("📁 Categories")]
+            Transactions[("💵 Transactions")]
+            Budgets[("💰 Budgets")]
+        end
+    end
+
+    User -->|"HTTP/HTTPS"| React
+    React --> Components
+    React --> Router
+    React --> Context
+    Context --> Axios
+
+    Axios -->|"REST API<br/>+ JWT Token"| Express
+
+    Express --> CORS
+    CORS --> Auth
+    Auth --> Validation
+
+    Validation --> AuthCtrl
+    Validation --> TransCtrl
+    Validation --> CatCtrl
+    Validation --> BudgetCtrl
+    Validation --> DashCtrl
+
+    AuthCtrl --> Prisma
+    TransCtrl --> Prisma
+    CatCtrl --> Prisma
+    BudgetCtrl --> Prisma
+    DashCtrl --> Prisma
+
+    Prisma -->|"SQL Queries"| PostgreSQL
+
+    PostgreSQL --> Users
+    PostgreSQL --> Categories
+    PostgreSQL --> Transactions
+    PostgreSQL --> Budgets
+
+    Users -.->|"1:N"| Transactions
+    Users -.->|"1:N"| Categories
+    Users -.->|"1:N"| Budgets
+    Categories -.->|"1:N"| Transactions
+    Categories -.->|"1:N"| Budgets
+
+    classDef tier1Style fill:#fef3c7,stroke:#f59e0b,stroke-width:4px,color:#000
+    classDef tier2Style fill:#d1fae5,stroke:#10b981,stroke-width:4px,color:#000
+    classDef tier3Style fill:#e0e7ff,stroke:#6366f1,stroke-width:4px,color:#000
+
+    class React,Components,Router,Context,Axios tier1Style
+    class Express,CORS,Auth,Validation,AuthCtrl,TransCtrl,CatCtrl,BudgetCtrl,DashCtrl,Prisma tier2Style
+    class PostgreSQL,Users,Categories,Transactions,Budgets tier3Style
+            </div>
+        </div>
+
+        <div class="footer">
+            <h3>🎯 FinTrack - Three-Tier Architecture</h3>
+            <p style="margin-top: 15px; font-size: 1.2em;">Kiến trúc 3 tầng chuẩn cho ứng dụng web hiện đại</p>
+            <div class="port-info">
+                <strong>TIER 1:</strong> localhost:5173 |
+                <strong>TIER 2:</strong> localhost:3000 |
+                <strong>TIER 3:</strong> localhost:5432
+            </div>
+            <p style="margin-top: 20px; opacity: 0.8;">Built with ❤️ using React + Express + PostgreSQL</p>
+            <p style="margin-top: 5px; opacity: 0.6;">Generated: 2025-12-10</p>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            themeVariables: {
+                primaryColor: '#667eea',
+                primaryTextColor: '#fff',
+                primaryBorderColor: '#764ba2',
+                lineColor: '#64748b',
+                secondaryColor: '#f0f9ff',
+                tertiaryColor: '#e0f2fe'
+            },
+            flowchart: {
+                curve: 'basis',
+                padding: 20,
+                nodeSpacing: 50,
+                rankSpacing: 80
+            },
+            sequence: {
+                diagramMarginX: 50,
+                diagramMarginY: 10,
+                actorMargin: 80,
+                width: 180,
+                height: 80,
+                boxMargin: 10,
+                messageAlign: 'center',
+                mirrorActors: true,
+                bottomMarginAdj: 1,
+                useMaxWidth: true
+            }
+        });
+
+        // Smooth scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('FinTrack 3-Tier Architecture loaded successfully! 🚀');
+        });
+    </script>
+</body>
+</html>

@@ -164,3 +164,57 @@ export const getRecentTransactions = async (
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+export const getMonthlyTrend = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const months = req.query.months ? parseInt(req.query.months as string) : 6;
+    const now = new Date();
+    const trendData = [];
+
+    for (let i = months - 1; i >= 0; i--) {
+      const targetDate = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const targetMonth = targetDate.getMonth() + 1;
+      const targetYear = targetDate.getFullYear();
+
+      const startDate = new Date(targetYear, targetMonth - 1, 1);
+      const endDate = new Date(targetYear, targetMonth, 0, 23, 59, 59);
+
+      // Get all transactions for the month
+      const transactions = await prisma.transaction.findMany({
+        where: {
+          userId: req.userId,
+          date: {
+            gte: startDate,
+            lte: endDate,
+          },
+        },
+      });
+
+      // Calculate totals
+      const income = transactions
+        .filter((t) => t.type === 'INCOME')
+        .reduce((sum, t) => sum + Number(t.amount), 0);
+
+      const expense = transactions
+        .filter((t) => t.type === 'EXPENSE')
+        .reduce((sum, t) => sum + Number(t.amount), 0);
+
+      const balance = income - expense;
+
+      trendData.push({
+        month: targetDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+        income,
+        expense,
+        balance,
+      });
+    }
+
+    res.json({ trendData });
+  } catch (error) {
+    console.error('Get monthly trend error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};

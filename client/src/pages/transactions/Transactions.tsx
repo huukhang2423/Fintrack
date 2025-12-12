@@ -84,7 +84,7 @@ const Transactions = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 dark:border-primary-400"></div>
       </div>
     );
   }
@@ -100,13 +100,13 @@ const Transactions = () => {
       <Card>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Type
             </label>
             <select
               value={filter.type}
               onChange={(e) => setFilter({ ...filter, type: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors"
             >
               <option value="">All</option>
               <option value="INCOME">Income</option>
@@ -114,7 +114,7 @@ const Transactions = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Category
             </label>
             <select
@@ -122,7 +122,7 @@ const Transactions = () => {
               onChange={(e) =>
                 setFilter({ ...filter, categoryId: e.target.value })
               }
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors"
             >
               <option value="">All</option>
               {categories.map((category) => (
@@ -141,46 +141,46 @@ const Transactions = () => {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">
+                <tr className="border-b border-gray-200 dark:border-gray-700">
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
                     Date
                   </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
                     Category
                   </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900">
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
                     Description
                   </th>
-                  <th className="px-4 py-3 text-right text-sm font-semibold text-gray-900">
+                  <th className="px-4 py-3 text-right text-sm font-semibold text-gray-900 dark:text-gray-100">
                     Amount
                   </th>
-                  <th className="px-4 py-3 text-right text-sm font-semibold text-gray-900">
+                  <th className="px-4 py-3 text-right text-sm font-semibold text-gray-900 dark:text-gray-100">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {transactions.map((transaction) => (
-                  <tr key={transaction.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 text-sm text-gray-900">
+                  <tr key={transaction.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                    <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
                       {format(new Date(transaction.date), 'MMM dd, yyyy')}
                     </td>
                     <td className="px-4 py-3 text-sm">
                       <div className="flex items-center space-x-2">
                         <span>{transaction.category.icon}</span>
-                        <span className="text-gray-900">
+                        <span className="text-gray-900 dark:text-gray-100">
                           {transaction.category.name}
                         </span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
+                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
                       {transaction.description || '-'}
                     </td>
                     <td
                       className={`px-4 py-3 text-sm text-right font-semibold ${
                         transaction.type === 'INCOME'
-                          ? 'text-green-600'
-                          : 'text-red-600'
+                          ? 'text-green-600 dark:text-green-400'
+                          : 'text-red-600 dark:text-red-400'
                       }`}
                     >
                       {transaction.type === 'INCOME' ? '+' : '-'}
@@ -189,13 +189,13 @@ const Transactions = () => {
                     <td className="px-4 py-3 text-sm text-right">
                       <button
                         onClick={() => handleEditTransaction(transaction)}
-                        className="text-primary-600 hover:text-primary-800 mr-3"
+                        className="text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 mr-3 transition-colors"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDeleteTransaction(transaction.id)}
-                        className="text-red-600 hover:text-red-800"
+                        className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors"
                       >
                         Delete
                       </button>
@@ -206,7 +206,7 @@ const Transactions = () => {
             </table>
           </div>
         ) : (
-          <p className="text-center text-gray-500 py-8">
+          <p className="text-center text-gray-500 dark:text-gray-400 py-8">
             No transactions found. Add your first transaction!
           </p>
         )}
