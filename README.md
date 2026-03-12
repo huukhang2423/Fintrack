@@ -1,166 +1,216 @@
 # FinTrack - Personal Finance Web App
 
-A user-friendly web application designed to help individuals, particularly students and young professionals, track their daily income and expenses.
+A full-stack personal finance management application for tracking income, expenses, budgets, and savings goals. Built with React 18, TypeScript, Node.js, Express, and PostgreSQL — deployed for free on Vercel + Render.
 
-## Team Members
-- Nguyễn Hữu Khang - ITDSIU21002
-- Nguyễn Bá Duy - ITDSIU21014
-- Phạm Huỳnh Thanh Quân - ITDSIU21110
-- Đặng Thái Sơn - ITDSIU21115
-- Nguyễn Thị Mai Phương - ITDSIU20080
+---
+
+## Features
+
+### Core
+- **Authentication** – Register/Login with JWT, bcrypt password hashing, and email verification
+- **Transaction Management** – Full CRUD for income and expense records with category tagging
+- **Budget Management** – Set monthly spending limits per category and track usage in real time
+- **Savings Goals** – Create financial goals, log contributions, and monitor progress toward targets
+
+### Dashboard
+- 6-month Income / Expense / Balance trend line chart
+- Income vs. Expense comparison bar chart
+- Expense breakdown pie chart
+- Income breakdown pie chart
+- Recent transactions list
+
+### UX
+- Dark mode with persistence
+- Responsive design (desktop, tablet, mobile)
+- Toast notifications for user feedback
+
+---
 
 ## Tech Stack
 
-### Frontend
-- React 18 + TypeScript
-- Tailwind CSS
-- Recharts (Data Visualization)
-- React Router DOM
-- Axios
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 18, TypeScript, Vite, Tailwind CSS |
+| UI / Forms | react-hook-form, react-hot-toast |
+| Data Visualization | Recharts |
+| HTTP Client | Axios |
+| Backend | Node.js, Express, TypeScript |
+| Database | PostgreSQL, Prisma ORM |
+| Auth | JWT, bcrypt |
+| Email | Nodemailer / SendGrid / Resend |
+| Deployment | Vercel (frontend), Render (backend) |
 
-### Backend
-- Node.js + Express + TypeScript
-- PostgreSQL
-- Prisma ORM
-- JWT Authentication
-- bcrypt
+---
 
 ## Project Structure
 
 ```
-ITPM_PROJ/
-├── client/          # Frontend React App
-├── server/          # Backend Express API
-└── README.md
+Fintrack/
+├── client/                     # React frontend
+│   └── src/
+│       ├── components/         # Reusable UI components
+│       ├── context/            # React context (auth, theme)
+│       ├── pages/              # Route-level pages
+│       ├── services/           # Axios API service layer
+│       └── types/              # TypeScript interfaces
+└── server/                     # Express backend
+    ├── prisma/
+    │   └── schema.prisma       # Database schema
+    └── src/
+        ├── controllers/        # Business logic
+        ├── middleware/         # Auth middleware
+        ├── routes/             # API route definitions
+        ├── utils/              # Helpers & email utilities
+        ├── seed.ts             # Default category seeder
+        └── index.ts            # App entry point
 ```
 
-## Features
+---
 
-### ✅ Implemented Features
-- **User Authentication** - Register/Login with JWT & Email Verification
-- **Transaction Management** - Full CRUD operations for income/expenses
-- **Budget Management** - Set and track monthly budgets by category
-- **Goals & Savings** - Create savings goals and track progress
-- **Advanced Dashboard**:
-  - 6-Month Income/Expense/Balance Trend Chart
-  - Income vs Expense Comparison Bar Chart
-  - Expense Breakdown Pie Chart
-  - Income Breakdown Pie Chart
-  - Recent Transactions List
-- **Dark Mode** - Full dark mode support with theme persistence
-- **Responsive Design** - Works on desktop, tablet, and mobile
+## Database Schema
 
-## Setup Instructions
+```
+User ──< Transaction
+User ──< Budget
+User ──< Goal ──< GoalContribution
+User ──< Category
+```
+
+| Model | Key Fields |
+|-------|-----------|
+| User | id, email, password, isVerified, createdAt |
+| Category | id, name, type (INCOME/EXPENSE), userId |
+| Transaction | id, amount, type, categoryId, userId, date, note |
+| Budget | id, userId, categoryId, amount, month (unique per user/category/month) |
+| Goal | id, userId, name, targetAmount, currentAmount, status (ACTIVE/COMPLETED/CANCELLED) |
+| GoalContribution | id, goalId, amount, date, note |
+
+---
+
+## Getting Started
 
 ### Prerequisites
-- Node.js (v18+)
-- PostgreSQL (v14+)
-- npm or yarn
+
+- Node.js v18+
+- PostgreSQL v14+
 
 ### Backend Setup
 
-1. Navigate to server directory:
 ```bash
 cd server
-```
-
-2. Install dependencies:
-```bash
 npm install
+
+# Configure environment
+cp .env.example .env
 ```
 
-3. Create `.env` file:
+`.env` variables:
+
 ```env
 DATABASE_URL="postgresql://username:password@localhost:5432/fintrack"
 JWT_SECRET="your-secret-key"
 PORT=3000
 ```
 
-4. Run Prisma migrations:
 ```bash
+# Run migrations and seed default categories
 npx prisma migrate dev
 npx prisma generate
-```
-
-5. Seed default categories:
-```bash
 npm run seed
-```
 
-6. Start server:
-```bash
+# Start development server
 npm run dev
 ```
 
 ### Frontend Setup
 
-1. Navigate to client directory:
 ```bash
 cd client
-```
-
-2. Install dependencies:
-```bash
 npm install
+
+# Configure environment
+cp .env.example .env
 ```
 
-3. Create `.env` file:
+`.env` variables:
+
 ```env
 VITE_API_URL=http://localhost:3000/api
 ```
 
-4. Start development server:
 ```bash
 npm run dev
 ```
 
-## API Documentation
+Open `http://localhost:5173` in your browser.
+
+---
+
+## API Reference
 
 ### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-- `GET /api/auth/me` - Get current user
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/register` | Register new user |
+| POST | `/api/auth/login` | Login and receive JWT |
+| GET | `/api/auth/me` | Get current user info |
 
 ### Transactions
-- `GET /api/transactions` - Get all transactions
-- `POST /api/transactions` - Create transaction
-- `PUT /api/transactions/:id` - Update transaction
-- `DELETE /api/transactions/:id` - Delete transaction
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/transactions` | Get all transactions |
+| POST | `/api/transactions` | Create transaction |
+| PUT | `/api/transactions/:id` | Update transaction |
+| DELETE | `/api/transactions/:id` | Delete transaction |
 
 ### Categories
-- `GET /api/categories` - Get all categories
-- `POST /api/categories` - Create custom category
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/categories` | Get all categories |
+| POST | `/api/categories` | Create custom category |
 
 ### Dashboard
-- `GET /api/dashboard/summary` - Get dashboard summary
-- `GET /api/dashboard/chart` - Get chart data
-- `GET /api/dashboard/trend` - Get 6-month trend data
-- `GET /api/dashboard/recent` - Get recent transactions
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/dashboard/summary` | Total income, expenses, balance |
+| GET | `/api/dashboard/chart` | Pie chart data by category |
+| GET | `/api/dashboard/trend` | 6-month trend data |
+| GET | `/api/dashboard/recent` | Recent transactions |
 
 ### Budgets
-- `GET /api/budgets` - Get all budgets
-- `POST /api/budgets` - Create budget
-- `PUT /api/budgets/:id` - Update budget
-- `DELETE /api/budgets/:id` - Delete budget
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/budgets` | Get all budgets |
+| POST | `/api/budgets` | Create budget |
+| PUT | `/api/budgets/:id` | Update budget |
+| DELETE | `/api/budgets/:id` | Delete budget |
 
 ### Goals
-- `GET /api/goals` - Get all goals
-- `GET /api/goals/:id` - Get single goal
-- `POST /api/goals` - Create goal
-- `PUT /api/goals/:id` - Update goal
-- `DELETE /api/goals/:id` - Delete goal
-- `POST /api/goals/:id/contributions` - Add contribution
-- `DELETE /api/goals/:goalId/contributions/:contributionId` - Remove contribution
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/goals` | Get all goals |
+| POST | `/api/goals` | Create goal |
+| PUT | `/api/goals/:id` | Update goal |
+| DELETE | `/api/goals/:id` | Delete goal |
+| POST | `/api/goals/:id/contributions` | Add contribution |
+| DELETE | `/api/goals/:goalId/contributions/:contributionId` | Remove contribution |
 
-## 🌐 Deployment
+---
 
-See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for detailed deployment instructions to Render + Vercel (100% FREE).
+## Deployment
 
-Quick summary:
-1. **Backend:** Deploy to Render.com with PostgreSQL
-2. **Frontend:** Deploy to Vercel
-3. **Total Cost:** $0/month 🎉
+### Free Hosting (Vercel + Render)
 
-## License
+**Backend → Render:**
+1. Push `server/` to GitHub
+2. Create a new Web Service on [Render](https://render.com)
+3. Set environment variables from `.env.production.example`
+4. Deploy — Render auto-detects Node.js
 
-This is an academic project for educational purposes.
+**Frontend → Vercel:**
+1. Import the repo on [Vercel](https://vercel.com)
+2. Set root directory to `client/`
+3. Set `VITE_API_URL` to your Render backend URL
+4. Deploy
+
+**Total cost: $0/month**
